@@ -1,0 +1,30 @@
+name: Daily Automated Commit
+
+on:
+  schedule:
+    # Runs at 05:30 UTC every day. (Specific hour and minute, no wildcards for time)
+    - cron: '30 5 * * *'
+  workflow_dispatch: # This is CRUCIAL so you can manually trigger it for the assignment
+
+permissions:
+  contents: write # This gives the Action permission to push the commit back to your repo
+
+jobs:
+  make-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Create or update the daily log
+      run: |
+        echo "Automated daily update on $(date)" >> update_log.txt
+        
+    - name: Commit and push for 22f3000831@ds.study.iitm.ac.in
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add update_log.txt
+        git commit -m "Automated daily documentation update"
+        git push
